@@ -1,18 +1,99 @@
 import React from 'react';
-import Button from '@ant-design/react-native/lib/button';
+import axios from 'axios';
+import { View, Text, Picker } from 'react-native';
+import { Button, InputItem, Icon, Toast } from '@ant-design/react-native';
+import ajax from '../../../services';
+import { UserRole } from '../../redux/user-reducer';
 
+import styles from './style';
 interface IProps {
 
 }
-
 interface IState {
-
+    name: string,
+    pwd: string,
+    role: UserRole
 }
-
 export default class Login extends React.Component<IProps, IState> {
+
+    state: IState = {
+        name: '',
+        pwd: '',
+        role: UserRole.Employee
+    }
+
     render() {
+        const { name, pwd, role } = this.state
         return (
-            <Button>login</Button>
+            <View style={styles.login}>
+                <Text style={styles.header}>环境监控系统</Text>
+                <View style={styles.inputArea}>
+                    <InputItem
+                        clear
+                        value={name}
+                        onChange={this.handleNameChange}
+                        style={styles.input}
+                        labelNumber={2}
+                        placeholder="请输入用户名"
+                    >
+                        <Icon name="user" size="sm" />
+                    </InputItem>
+                </View>
+                <InputItem
+                    clear
+                    value={pwd}
+                    onChange={this.handlePwdChange}
+                    type="password"
+                    style={styles.input}
+                    labelNumber={2}
+                    placeholder="请输入密码"
+                >
+                    <Icon name="tool" size="sm" />
+                </InputItem>
+                <Picker 
+                    style={styles.rolepicker}
+                    selectedValue={role}
+                    onValueChange={this.handleRoleChange}
+                >
+                    <Picker.Item label="养殖员工" value={UserRole.Employee} />
+                    <Picker.Item label="管理员" value={UserRole.Admin} />
+                </Picker>
+                <Button 
+                    type="primary" 
+                    style={styles.btn}
+                    disabled={!name || !pwd}
+                    onPress={this.handleLogin}
+                >
+                    登录
+                </Button>
+            </View>
         )
+    }
+
+
+    handleNameChange = (name: string) => {
+        this.setState({
+            name
+        })
+    }
+
+    handlePwdChange = (pwd: string) => {
+        this.setState({
+            pwd
+        })
+    }
+
+    handleRoleChange = (role: UserRole) => {
+        this.setState({
+            role
+        })
+    }
+
+    handleLogin = async () => {
+        const res: IResponse = await ajax('/user/login', this.state);
+        if(res.status === 'error') {
+            Toast.info(res.msg, 2);
+            return;
+        }
     }
 }
