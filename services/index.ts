@@ -1,12 +1,15 @@
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
+axios.defaults.method = 'post';
+axios.defaults.baseURL = 'http://192.168.43.97:3000';
+
+export { axios };
 const ajax = (url: string, data: any = {}): any => {
     return new Promise((resolve, reject) => {
         let options = {
             url,
             data,
-            method: 'post',
-            baseURL: 'http://192.168.43.97:3000',
             transformRequest: [function(data: any) {
                 return JSON.stringify(data)
             }],
@@ -22,9 +25,8 @@ const ajax = (url: string, data: any = {}): any => {
             }],
             responseType: 'json', 
             headers: {
-                "Accept": "application/json",
                 "Content-Type": 'application/json'
-            },
+            }
         }
         axios.request(options).then(response => {
             resolve(response.data);
@@ -33,5 +35,4 @@ const ajax = (url: string, data: any = {}): any => {
         })
     })
 }
-
 export default ajax;

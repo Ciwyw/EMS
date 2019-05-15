@@ -3,7 +3,13 @@ declare interface ReduxAction {
     data: any
 }
 declare interface IResponse {
-    status: 'error' | 'success',
+    error: boolean,
     data?: any,
     msg?: string
 }
+
+declare interface IFile {
+    url: string
+}
+
+declare module 'rc-form';

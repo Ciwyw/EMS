@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import { View, Text, Picker } from 'react-native';
 import { Button, InputItem, Icon, Toast } from '@ant-design/react-native';
 import ajax from '../../../services';
@@ -7,14 +6,16 @@ import { UserRole } from '../../redux/user-reducer';
 
 import styles from './style';
 interface IProps {
-
+    history: {
+        goBack: () => void
+    }
 }
 interface IState {
     name: string,
     pwd: string,
     role: UserRole
 }
-export default class Login extends React.Component<IProps, IState> {
+class Login extends React.Component<IProps, IState> {
 
     state: IState = {
         name: '',
@@ -70,7 +71,6 @@ export default class Login extends React.Component<IProps, IState> {
         )
     }
 
-
     handleNameChange = (name: string) => {
         this.setState({
             name
@@ -91,9 +91,12 @@ export default class Login extends React.Component<IProps, IState> {
 
     handleLogin = async () => {
         const res: IResponse = await ajax('/user/login', this.state);
-        if(res.status === 'error') {
-            Toast.info(res.msg, 2);
+        if(res.error) {
+            Toast.fail(res.msg, 2);
             return;
         }
+        this.props.history.goBack();
     }
 }
+
+export default Login;

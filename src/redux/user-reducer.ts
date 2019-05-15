@@ -1,21 +1,25 @@
 
 export enum UserRole {
     Unknown,
-    Admin,
-    Employee
+    Employee,
+    Admin
 }
 export interface IUserState {
     id: string,
+    farm_id: string,
     role: UserRole,
     avatar: string,
-    name: string
+    user_name: string,
+    phone_number: string
 }
 
 const userInit: IUserState = {
     id: '',
+    farm_id: '',
     role: UserRole.Unknown,
     avatar: '',
-    name: ''
+    user_name: '',
+    phone_number: ''
 }
 
 export default function(state = userInit, action: ReduxAction) {

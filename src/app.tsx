@@ -5,7 +5,8 @@ import { Provider as ProviderComponent } from '@ant-design/react-native';
 import store from './redux/user-store';
 
 import Login from './containers/login';
-
+import Home from './containers/home';
+import Farm from './containers/farm';
 
 const App = () => {
     return (
@@ -13,7 +14,9 @@ const App = () => {
             <ProviderComponent>
                 <NativeRouter>
                     <Switch>
-                        <Route path="/" component={Login} exact />
+                        <Route path="/" component={Home} exact />
+                        <Route path="/login" component={Login} />
+                        <Route path="/farm/:id" component={Farm}/>
                     </Switch>
                 </NativeRouter>
             </ProviderComponent>
