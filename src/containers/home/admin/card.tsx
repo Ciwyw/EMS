@@ -5,7 +5,7 @@ interface IProps {
     history: {
         push: (path: string) => void
     },
-    info: any
+    info: IFarm
 }
 
 class Card extends React.Component<IProps> {

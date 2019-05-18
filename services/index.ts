@@ -1,8 +1,9 @@
 import axios from 'axios';
+import config from './config';
 
 axios.defaults.withCredentials = true;
 axios.defaults.method = 'post';
-axios.defaults.baseURL = 'http://192.168.43.97:3000';
+axios.defaults.baseURL = config.BASE_URL;
 
 export { axios };
 const ajax = (url: string, data: any = {}): any => {

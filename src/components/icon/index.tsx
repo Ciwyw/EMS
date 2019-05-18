@@ -5,6 +5,7 @@ import { Icon } from '@ant-design/react-native';
 interface IProps {
     name: any,
     size?: number | "xxs" | "xs" | "sm" | "md" | "lg",
+    color?: string,
     onPress?: () => void
 }
 
@@ -13,10 +14,10 @@ const handlePressIcon = (onPress: () => void) => {
 }
 
 const IconComponent: React.FunctionComponent<IProps> = (props) => {
-    const { name, size, onPress } = props;
+    const { name, size, onPress, color } = props;
     return (
         <TouchableOpacity onPress={() => handlePressIcon(onPress)}>
-            <Icon name={name} size={size} />
+            <Icon name={name} size={size} color={color}/>
         </TouchableOpacity>
     )
 }

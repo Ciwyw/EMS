@@ -7,6 +7,9 @@ import store from './redux/user-store';
 import Login from './containers/login';
 import Home from './containers/home';
 import Farm from './containers/farm';
+import FarmEdit from './containers/farm/edit';
+import Monitor from './containers/farm/monitor';
+import User from './containers/user';
 
 const App = () => {
     return (
@@ -15,8 +18,12 @@ const App = () => {
                 <NativeRouter>
                     <Switch>
                         <Route path="/" component={Home} exact />
-                        <Route path="/login" component={Login} />
-                        <Route path="/farm/:id" component={Farm}/>
+                        <Route path="/login" component={Login} exact />
+                        <Route path="/farm/add" component={FarmEdit} exact />
+                        <Route path="/farm/edit/:id" component={FarmEdit} exact />
+                        <Route path="/farm/:id" component={Farm} exact />
+                        <Route path="/monitor/:farmId/:farmName" component={Monitor} exact />
+                        <Route path="/user" component={User} exact />
                     </Switch>
                 </NativeRouter>
             </ProviderComponent>

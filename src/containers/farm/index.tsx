@@ -1,204 +1,161 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { createForm } from 'rc-form';
-import { List, InputItem, Picker, TextareaItem, Button, Toast, Icon, ImagePicker } from '@ant-design/react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { List, Toast, Modal, SwipeAction } from '@ant-design/react-native';
 import ajax from '../../../services';
-import upload from '../../utils/upload';
-import { requestCameraPermission } from '../../utils/permission';
 import Header from '../../components/header';
 
 interface IProps {
     history: {
+        push: (path: string) => void,
         goBack: () => void
     },
     match: {
         params: {
             id: string
         }
-    },
-    form: any
+    }
 }
 
 interface IState {
-    files: IFile[],
-    uri: string
+    farmInfo: IFarm
 }
 
+const Item = List.Item;
 class Farm extends React.Component<IProps, IState> {
-
     state: IState = {
-        files: [],
-        uri: ''
+        farmInfo: {}
     }
 
     render() {
-        const { getFieldDecorator } = this.props.form;
-        const { files } = this.state;
-        const rightFragment = (
-            <TouchableOpacity onPress={this.handleSubmit}>
-                <View><Text>保存</Text></View>
-            </TouchableOpacity>
-        );
+        const { farmInfo } = this.state;
+        const rightAction = [
+            {
+                text: '编辑',
+                onPress: () => this.handleEdit(),
+                style: { backgroundColor: 'rgb(39, 120, 255)', color: '#fff' },
+            },
+            {
+                text: '删除',
+                onPress: () => this.handleDelete(),
+                style: { backgroundColor: '#f00', color: '#fff' },
+            }
+        ]
         return (
-            <View>
-                <Header 
-                    title="新增养殖场" 
-                    history={this.props.history}
-                    right={rightFragment}
-                />
-                <List renderHeader="基本信息">
-                    {
-                        getFieldDecorator('farm_name',{
-                            rules: [{ required: true }]
-                        })(
-                            <InputItem clear>名称</InputItem>
-                        )
-                    }
-
-                    <List.Item
-                        extra={
-                            <ImagePicker 
-                                files={files} 
-                                selectable={files.length < 1}
-                                onChange={this.handlePickImage}
-                            />}
-                        multipleLine
-                    >
-                        上传图片
-                    </List.Item>
-                    {
-                        getFieldDecorator('stall_num',{
-                            rules: [{ required: true }],
-                            normalize: (val: string) => parseInt(val)
-                        })(
-                            <InputItem clear type="number">牛舍数量</InputItem>
-                        )
-                    }
-                    {
-                        getFieldDecorator('address',{
-                            rules: [{ required: true }]
-                        })(
-                            <TextareaItem rows={4} placeholder="养殖场地址" /> 
-                        )
-                    }
-                </List>
+            <View style={styles.farm}>
+                <Header title={farmInfo.farm_name} history={this.props.history}/>
+                <SwipeAction autoClose right={rightAction} style={{ backgroundColor: '#fff' }}>
+                    <View style={styles.baseinfo}>
+                        <Image style={styles.image} source={{ uri: farmInfo.image || ''}} />
+                        <View style={styles.detail}>
+                            <Text>{farmInfo.farm_name}</Text>
+                            <Text>{farmInfo.stall_num}间牛舍</Text>
+                            <Text>{farmInfo.address}</Text>
+                        </View>
+                    </View>
+                </SwipeAction>
                 <List renderHeader="环境参数阈值">
-                    {
-                        getFieldDecorator('temp_thres',{
-                            normalize: (val: string) => val && parseFloat(val)
-                        })(
-                            <InputItem clear type="number">温度</InputItem>
-                        )
-                    }
-                    {
-                        getFieldDecorator('humi_thres',{
-                            normalize: (val: string) => val && parseFloat(val)
-
-                        })(
-                            <InputItem clear type="number">湿度</InputItem>
-                        )
-                    }
-                    {
-                        getFieldDecorator('illum_thres',{
-                            normalize: (val: string) => val && parseFloat(val)
-
-                        })(
-                            <InputItem clear type="number">光照度</InputItem>
-                        )
-                    }
-                    {
-                        getFieldDecorator('amm_thres',{
-                            normalize: (val: string) => val && parseFloat(val)
-
-                        })(
-                            <InputItem clear type="number">氨气</InputItem>
-                        )
-                    }
-                    {
-                        getFieldDecorator('h2s_thres',{
-                            normalize: (val: string) => val && parseFloat(val)
-
-                        })(
-                            <InputItem clear type="number">硫化氢</InputItem>
-                        )
-                    }
-                    {
-                        getFieldDecorator('co2_thres',{
-                            normalize: (val: string) => val && parseFloat(val)
-
-                        })(
-                            <InputItem clear type="number">CO2</InputItem>
-                        )
-                    }
+                    <Item extra={<Text>{farmInfo.temp_thres}</Text>} arrow="empty">温度 (℃)</Item>
+                    <Item extra={<Text>{farmInfo.humi_thres}</Text>} arrow="empty">湿度 (%)</Item>
+                    <Item extra={<Text>{farmInfo.illum_thres}</Text>} arrow="empty">光照度 (lx)</Item>
+                    <Item extra={<Text>{farmInfo.amm_thres}</Text>} arrow="empty">氨气 (ppm)</Item>
+                    <Item extra={<Text>{farmInfo.h2s_thres}</Text>} arrow="empty">H2S (ppm)</Item>
+                    <Item extra={<Text>{farmInfo.co2_thres}</Text>} arrow="empty">CO2 (ppm)</Item>
                 </List>
+                <View style={styles.monitor}>
+                    <TouchableOpacity onPress={this.handleMonitor}>
+                        <Text style={styles.text}>环境监控</Text>
+                    </TouchableOpacity>                    
+                </View>
             </View>
         )
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params;
-        if(!id.trim()) { //新增
-            const auth = requestCameraPermission();
-            if(!auth) {
-                this.props.history.goBack();
-            }
-            return;
-        }
-        this.fetchFarmInfo(id);
+        this.fetchFarmInfo();
     }
 
-    fetchFarmInfo = async (id: string) => {
-        const res: IResponse = ajax('/farm/info', {id});
+    fetchFarmInfo = async () => {
+        const id = parseInt(this.props.match.params.id);
+        const res: IResponse = await ajax('/farm/info', {id});
         if(res.error) {
-            Toast.fail(res.msg);
+            Toast.fail(res.msg, 1);
             return;
         }
-        console.log(res);
-        this.setState({ ...res.data });
-
-    }
-
-    handlePickImage = async ( files: IFile[]) => {
-        const res: IResponse = await upload(files[0].url);
-        if(res.error) {
-            Toast.fail('图片上传失败');
-            return;
-        }
-        Toast.success('图片上传成功', 2);
         this.setState({
-            files,
-            uri: res.data.uri
-        }, () => {
-            console.log(this.state.uri);
-        });
+            farmInfo: res.data
+        })
     }
 
-    handleSubmit = () => {
-        const { uri } = this.state;
-        this.props.form.validateFields( async (error: any,values: any) => {
-            if(error) {
-                Toast.fail('请完善所有信息！');
-                return;
+    handleMonitor = () => {
+        const { id, farm_name } = this.state.farmInfo;
+        this.props.history.push(`/monitor/${id}/${farm_name}`);
+
+    }
+
+    handleEdit = () => {
+        this.props.history.push(`/farm/edit/${this.props.match.params.id}`);
+    }
+
+    handleDelete = () => {
+        Modal.alert('确认要删除当前养殖场？', '', [
+            {
+                text: '删除',
+                onPress: async () => {
+                    const id = parseInt(this.props.match.params.id);
+                    const res: IResponse = await ajax('/farm/delete', {id});
+                    if(res.error) {
+                        Toast.fail(res.msg, 1);
+                        return;
+                    }
+                    Toast.success('删除成功', 1);
+                    this.props.history.goBack();
+                }
+            },
+            {
+                text: '取消',
+                onPress: async () => {}
             }
-            if(!uri) {
-                Toast.fail('请上传养殖场图片！');
-                return;
-            }
-            const res: IResponse = await ajax('/farm/add', {
-                ...values,
-                district: values.district.join(),
-                image: uri
-            })
-            if(res.error) {
-                Toast.fail(res.msg, 2);
-                return;
-            }
-            Toast.success('添加成功', 1);
-            setTimeout(() => {
-                this.props.history.goBack();
-            }, 1000);
-        });
+        ])
     }
 }
 
-export default createForm()(Farm);
+const styles = StyleSheet.create({
+    farm: {
+        height: '100%',
+        position: 'relative'
+    },
+    monitor: {
+        width: 90,
+        height: 50,
+        position: 'absolute',
+        right: 0,
+        bottom: 120,
+        backgroundColor: 'rgb(39, 120, 255)',
+        paddingLeft: 15,
+        borderTopLeftRadius: 25,
+        borderBottomLeftRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        color: '#fff',
+        fontSize: 15
+    },
+    baseinfo: {
+        width: '100%',
+        padding: 15,
+        backgroundColor: "#fff",
+        flexDirection: 'row'
+    },
+    image: {
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        marginRight: 10
+    },
+    detail: {
+        justifyContent: 'center'
+    }
+})
+
+export default Farm;

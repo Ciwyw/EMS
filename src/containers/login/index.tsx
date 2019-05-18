@@ -92,7 +92,7 @@ class Login extends React.Component<IProps, IState> {
     handleLogin = async () => {
         const res: IResponse = await ajax('/user/login', this.state);
         if(res.error) {
-            Toast.fail(res.msg, 2);
+            Toast.fail(res.msg, 1);
             return;
         }
         this.props.history.goBack();

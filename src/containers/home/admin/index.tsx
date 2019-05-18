@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { Toast, Drawer, WhiteSpace, Button } from '@ant-design/react-native';
+import { Toast, Drawer } from '@ant-design/react-native';
 import ajax from '../../../../services';
 import Header from '../../../components/header';
 import Icon from '../../../components/icon';
+import Empty from '../../../components/empty';
 import Card from './card';
 
 interface IProps {
@@ -13,17 +14,15 @@ interface IProps {
 }
 
 interface IState {
-    farmList: any[],
-    drawerVisible: boolean
+    farmList: IFarm[]
 }
 
 class Admin extends React.Component<IProps, IState> {
     state: IState = {
-        farmList: [],
-        drawerVisible: false
+        farmList: []
     }
     render() {
-        const { drawerVisible, farmList } = this.state;
+        const {  farmList } = this.state;
         const rightFragment = <Icon name="plus" onPress={this.handlePressAdd}/>;
         return (
             <View>
@@ -31,25 +30,18 @@ class Admin extends React.Component<IProps, IState> {
                     back={false} 
                     title="养殖场" 
                     right={rightFragment}
-                    onOpenDrawer={this.handleOpenDrawer}
+                    onUser={this.handlePressUser}
                 />
-                <Drawer
-                    sidebar={this.renderSiderbar()}
-                    position="left"
-                    open={drawerVisible}
-                />
-                <FlatList 
-                    data={farmList} 
-                    renderItem={({item}) => <Card info={item} history={this.props.history}/>}
-                    style={styles.list}
-                />
+                {
+                    farmList.length === 0 ?
+                        <Empty hint="还没有养殖场，点击右上角添加吧～" /> :
+                        <FlatList 
+                            data={farmList} 
+                            renderItem={({item}) => <Card key={item.id} info={item} history={this.props.history}/>}
+                            style={styles.list}
+                        />
+                }
             </View>
-        )
-    }
-
-    renderSiderbar = () => {
-        return (
-            <Text>side</Text>
         )
     }
 
@@ -58,25 +50,17 @@ class Admin extends React.Component<IProps, IState> {
     }
 
     handlePressAdd = () => {
-        this.props.history.push('/farm/ ');
+        this.props.history.push('/farm/add');
     }
 
-    handleOpenDrawer = () => {
-        this.setState({
-            drawerVisible: true
-        })
-    }
-
-    handleCloseDrawer = () => {
-        this.setState({
-            drawerVisible: false
-        })
+    handlePressUser = () => {
+        this.props.history.push('/user');
     }
 
     fetchFarmList = async () => {
         const res: IResponse = await ajax('/farm/list');
         if(res.error) {
-            Toast.fail(res.msg, 2);
+            Toast.fail(res.msg, 1);
             return;
         }
         this.setState({

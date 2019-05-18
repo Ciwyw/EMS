@@ -10,7 +10,7 @@ interface IProps {
     history?: {
         goBack: () => void
     },
-    onOpenDrawer?: () => void
+    onUser?: () => void
 }
 
 interface IState {
@@ -22,11 +22,11 @@ export default class Header extends React.Component<IProps, IState> {
     }
 
     render() {
-        const { back, title, right, onOpenDrawer } = this.props;
+        const { back, title, right, onUser } = this.props;
         return (
             <View style={styles.header}>
                 { back ? <Icon name="arrow-left" onPress={this.handleBack}/>
-                    : <Icon name="bars" onPress={onOpenDrawer}/>
+                    : <Icon name="user" onPress={onUser}/>
                 }
                 <Text style={styles.title}>{title}</Text>
                 { right ? right : <View /> }
