@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { Toast, Drawer } from '@ant-design/react-native';
+import { connect } from 'react-redux';
+import { View, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Toast } from '@ant-design/react-native';
 import ajax from '../../../../services';
+import { IUserState } from '../../../redux/user-reducer';
 import Header from '../../../components/header';
 import Icon from '../../../components/icon';
 import Empty from '../../../components/empty';
@@ -10,27 +12,33 @@ import Card from './card';
 interface IProps {
     history: {
         push: (path: string) => void
-    }
+    },
+    avatar?: string
 }
 
 interface IState {
-    farmList: IFarm[]
+    farmList: IFarm[],
 }
 
 class Admin extends React.Component<IProps, IState> {
+    
     state: IState = {
         farmList: []
     }
     render() {
         const {  farmList } = this.state;
-        const rightFragment = <Icon name="plus" onPress={this.handlePressAdd}/>;
+        const src = this.props.avatar ? { uri: this.props.avatar} : require('../../../assets/avatar.png');
+        const headerLeft = (
+            <TouchableOpacity onPress={this.handlePressUser}>
+                <Image source={src} style={styles.avatar}/>
+            </TouchableOpacity>);
+        const headerRight = <Icon name="plus" color="#fff" onPress={this.handlePressAdd}/>;
         return (
             <View>
                 <Header 
-                    back={false} 
                     title="养殖场" 
-                    right={rightFragment}
-                    onUser={this.handlePressUser}
+                    left={headerLeft}
+                    right={headerRight}
                 />
                 {
                     farmList.length === 0 ?
@@ -74,7 +82,16 @@ const styles = StyleSheet.create({
     list: {
         paddingHorizontal: 15,
         paddingVertical: 20
+    },
+    avatar: {
+        width: 30,
+        height: 30,
+        borderRadius: 15
     }
 })
 
-export default Admin;
+export default connect((state: IUserState) => {
+    return {
+        avatar: state.avatar
+    }
+})(Admin);

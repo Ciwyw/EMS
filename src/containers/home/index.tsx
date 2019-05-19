@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import ajax from '../../../services';
 import { userFetchInfo } from '../../redux/user-action';
+import store from '../../redux/user-store';
 import { UserRole } from '../../redux/user-reducer';
 import Admin from './admin';
 import Employ from './employ';
@@ -19,7 +20,7 @@ interface IState {
 export default class Home extends React.Component<IProps, IState> {
 
     state: IState = {
-        role: UserRole.Admin
+        role: UserRole.Unknown
     }
 
     render() {
@@ -33,11 +34,15 @@ export default class Home extends React.Component<IProps, IState> {
     }
 
     async componentDidMount() {
-        // const res: IResponse = await ajax('/user/info');
-        // if(res.status === 'error') {
-            // this.props.history.push('/login');
-        //     return;
-        // }
-        // console.log(res.data, 'userInfo----------');
+        const res: IResponse = await ajax('/user/info');
+        if(res.error) {
+            this.props.history.push('/login');
+            return;
+        }
+        console.log(res.data, 'userInfo----------');
+        this.setState({
+            role: res.data.role
+        });
+        store.dispatch(userFetchInfo(res.data));
     }
 }

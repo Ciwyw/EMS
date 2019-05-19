@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
     },
     monitor: {
         width: 90,
-        height: 50,
+        height: 40,
         position: 'absolute',
         right: 0,
         bottom: 120,
-        backgroundColor: 'rgb(39, 120, 255)',
+        backgroundColor: '#f45a8d',
         paddingLeft: 15,
         borderTopLeftRadius: 25,
         borderBottomLeftRadius: 25,

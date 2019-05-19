@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Picker } from 'react-native';
+import { View, Text, Picker, Image } from 'react-native';
 import { Button, InputItem, Icon, Toast } from '@ant-design/react-native';
 import ajax from '../../../services';
 import { UserRole } from '../../redux/user-reducer';
@@ -27,7 +27,7 @@ class Login extends React.Component<IProps, IState> {
         const { name, pwd, role } = this.state
         return (
             <View style={styles.login}>
-                <Text style={styles.header}>环境监控系统</Text>
+                <Image source={require('../../assets/logo.png')} style={styles.header}/>
                 <View style={styles.inputArea}>
                     <InputItem
                         clear
@@ -62,6 +62,7 @@ class Login extends React.Component<IProps, IState> {
                 <Button 
                     type="primary" 
                     style={styles.btn}
+                    activeStyle={styles.activeBtn}
                     disabled={!name || !pwd}
                     onPress={this.handleLogin}
                 >

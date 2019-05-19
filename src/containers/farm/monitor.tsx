@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Toast } from '@ant-design/react-native';
 import DatePicker from 'react-native-datepicker';
 import Header from '../../components/header';
@@ -24,6 +24,8 @@ interface IState {
     envList: IEnv[],
     date: string
 }
+
+const TODAY = formatDate();
 
 const paramList = ['温度','湿度','光照度','氨气','H2S','CO2'];
 const tableHead = [...paramList, '时间'];
@@ -53,12 +55,12 @@ class Monitor extends React.Component<IProps, IState> {
                         />
                     </View>
                     <Echarts option={this.initEchartOption()} height={350} />
-                    <View style={styles.tableWrapper}>
-                        <Table>
-                            <Row data={tableHead}/>
-                            <Rows data={this.initTableData()}/>
+                    <ScrollView style={styles.tableWrapper}>
+                        <Table borderStyle={{borderColor: '#f45a8d'}}>
+                            <Row data={tableHead} style={styles.tableHead} textStyle={styles.textHead}/>
+                            <Rows data={this.initTableData()} textStyle={styles.textBody}/>
                         </Table>
-                    </View>
+                    </ScrollView>
                 </View>
             </View>
         )
@@ -67,7 +69,7 @@ class Monitor extends React.Component<IProps, IState> {
     componentDidMount () {
         this.circleFetchEnvData();
         this.setState({
-            date: formatDate()
+            date: TODAY
         }, () => {
             console.log(this.state.date, 'date')
         });
@@ -103,7 +105,9 @@ class Monitor extends React.Component<IProps, IState> {
                 trigger: 'axis'
             },
             legend: {
-                data: paramList
+                data: paramList,
+                left: '22%',
+                right: '20%'
             },
             grid: {
                 left: '3%',
@@ -165,7 +169,7 @@ class Monitor extends React.Component<IProps, IState> {
             env.h2s,
             env.co2,
             formatTime(env.update_time)
-        ])
+        ]).reverse();
     }
 }
 
@@ -176,14 +180,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     chartTitle: {
-        fontSize: 19,
-        fontWeight: '500'
+        fontSize: 18,
+        fontWeight: '600'
     },
     datePicker: {
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginTop: 10,
+        marginBottom: 25,
     },
     tableWrapper: {
-        width: '100%'
+        width: '100%',
+        marginTop: 15,
+    },
+    table: {
+        borderWidth: 0
+    },
+    tableHead: {
+        backgroundColor: '#fff',
+        height: 35 
+    },
+    textHead: {
+        textAlign: 'center',
+        fontWeight: '500',
+        fontSize: 15,
+    },
+    textBody: {
+        textAlign: 'center',
+        height: 25,
+        lineHeight: 25
     }
 })
 

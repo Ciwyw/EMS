@@ -21,7 +21,7 @@ class Card extends React.Component<IProps> {
                                 <Text>{info.address}</Text>
                             </View>
                             <View style={styles.link}>
-                                <Text>详情</Text><Icon name="right" />
+                                <Text style={{ color: '#f45a8d' }}>详情</Text><Icon name="right" color="#f45a8d" />
                             </View>
                         </View>
                     </View>

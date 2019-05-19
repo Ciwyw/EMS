@@ -43,7 +43,7 @@ class Farm extends React.Component<IProps, IState> {
         const { files, farmInfo, edit } = this.state;
         const rightFragment = (
             <TouchableOpacity onPress={this.handleSubmit}>
-                <View><Text>保存</Text></View>
+                <View><Text style={{ color: '#fff' }}>保存</Text></View>
             </TouchableOpacity>
         );
         return (

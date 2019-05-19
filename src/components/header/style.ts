@@ -2,21 +2,19 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     header: {
-        height: 55,
+        height: 50,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 15,
-        backgroundColor: '#FFF'
+        backgroundColor: '#f45a8d'
     },
     title: {
         fontSize: 18,
         maxWidth: '50%',
-        overflow: 'hidden'
-    },
-    icon: {
-
+        overflow: 'hidden',
+        color: '#fff'
     }
 })
 

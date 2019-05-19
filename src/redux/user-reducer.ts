@@ -13,7 +13,7 @@ export interface IUserState {
     phone_number: string
 }
 
-const userInit: IUserState = {
+export const userInit: IUserState = {
     id: '',
     farm_id: '',
     role: UserRole.Unknown,

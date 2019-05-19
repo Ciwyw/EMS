@@ -4,12 +4,12 @@ const styles = StyleSheet.create({
     login: {
         alignItems: 'center',
         paddingLeft: 32,
-        paddingRight: 32,
+        paddingRight: 32
     },
     header: {
         marginTop: 65,
         marginBottom: 35,
-        fontSize: 30
+        marginRight: -400
     },
     inputArea: {
         width: '100%',
@@ -25,7 +25,12 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
     },
     btn: {
-        width: '100%'
+        width: '100%',
+        backgroundColor: '#f45a8d',
+        borderWidth: 0,
+    },
+    activeBtn: {
+        backgroundColor: '#f45a8d'
     }
 })
 

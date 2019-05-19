@@ -14,7 +14,6 @@ interface IState {
 export default class InputNumber extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
-        console.log(props);
         this.state = {
             str: `${props.value}`
         }
