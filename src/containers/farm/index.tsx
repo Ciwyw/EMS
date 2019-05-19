@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { List, Toast, Modal, SwipeAction } from '@ant-design/react-native';
+import { List, Toast, Modal, SwipeAction, Icon } from '@ant-design/react-native';
 import ajax from '../../../services';
 import Header from '../../components/header';
 
@@ -47,7 +47,7 @@ class Farm extends React.Component<IProps, IState> {
                     <View style={styles.baseinfo}>
                         <Image style={styles.image} source={{ uri: farmInfo.image || ''}} />
                         <View style={styles.detail}>
-                            <Text>{farmInfo.farm_name}</Text>
+                            <Text style={styles.farmName}>{farmInfo.farm_name}</Text>
                             <Text>{farmInfo.stall_num}间牛舍</Text>
                             <Text>{farmInfo.address}</Text>
                         </View>
@@ -148,13 +148,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     image: {
-        width: 90,
-        height: 90,
-        borderRadius: 45,
+        width: 80,
+        height: 80,
         marginRight: 10
     },
     detail: {
         justifyContent: 'center'
+    },
+    farmName: {
+        fontSize: 18,
+        marginBottom: 7,
+        color: '#000'
+    },
+    address: {
+        flexDirection: 'row'
     }
 })
 

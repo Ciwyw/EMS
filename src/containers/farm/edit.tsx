@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { createForm } from 'rc-form';
-import { List, InputItem, TextareaItem, Button, Toast, Icon, ImagePicker } from '@ant-design/react-native';
+import { List, InputItem, TextareaItem, Toast, ImagePicker } from '@ant-design/react-native';
 import ajax from '../../../services';
 import upload from '../../utils/upload';
 import { requestCameraPermission } from '../../utils/permission';

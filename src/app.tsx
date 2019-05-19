@@ -10,7 +10,8 @@ import Farm from './containers/farm';
 import FarmEdit from './containers/farm/edit';
 import Monitor from './containers/farm/monitor';
 import User from './containers/user';
-
+import UserDetail from './containers/user/detail';
+import UserUpdate from './containers/user/update';
 const App = () => {
     return (
         <Provider store={store}>
@@ -23,6 +24,8 @@ const App = () => {
                         <Route path="/farm/edit/:id" component={FarmEdit} exact />
                         <Route path="/farm/:id" component={Farm} exact />
                         <Route path="/monitor/:farmId/:farmName" component={Monitor} exact />
+                        <Route path="/user/detail" component={UserDetail} exact />
+                        <Route path="/user/update/:type" component={UserUpdate} exact />
                         <Route path="/user" component={User} exact />
                     </Switch>
                 </NativeRouter>

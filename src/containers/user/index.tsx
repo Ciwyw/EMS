@@ -1,13 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { List, Icon } from '@ant-design/react-native';
+import { List, Icon, Button, Modal, Toast } from '@ant-design/react-native';
 import { IUserState, UserRole } from '../../redux/user-reducer';
+import ajax from '../../../services';
 import Header from '../../components/header';
 
 interface IProps {
     history: {
-        goBack: () => void
+        goBack: () => void,
+        push: (path: string) => void
     },
     user?: IUserState
 }
@@ -32,6 +34,7 @@ class User extends React.Component<IProps, IState> {
                 </View>
                 <List>
                     <ListItem 
+                        onPress={this.handleInfo}
                         style={styles.listItem} 
                         arrow="horizontal" 
                         thumb={<Icon style={styles.icon} name="user" color="#3194d0"/>}
@@ -56,8 +59,40 @@ class User extends React.Component<IProps, IState> {
                         更多
                     </ListItem>
                 </List>
+                <Button 
+                    type="primary" 
+                    style={styles.btn}
+                    activeStyle={styles.activeBtn}
+                    onPress={this.handleLogout}
+                >
+                    退出登录
+                </Button>
             </View>
         )
+    }
+
+    handleInfo = () => {
+        this.props.history.push('/user/detail');
+    }
+
+    handleLogout = () => {
+        Modal.alert('确定要退出吗？', '', [
+            {
+                text: '确定',
+                onPress: async () => {
+                    const res: IResponse = await ajax('/user/logout');
+                    if(res.error) {
+                        Toast.fail('网络出现问题', 1);
+                        return;
+                    }
+                    this.props.history.push('/login');
+                }
+            },
+            {
+                text: '取消',
+                onPress: async () => {}
+            }
+        ])
     }
 }
 
@@ -87,6 +122,16 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 10
+    },
+    btn: {
+        width: '90%',
+        backgroundColor: '#f45a8d',
+        borderWidth: 0,
+        alignSelf: 'center',
+        marginTop: 50
+    },
+    activeBtn: {
+        backgroundColor: '#f45a8d'
     }
 })
 

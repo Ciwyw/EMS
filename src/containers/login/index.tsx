@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Picker, Image } from 'react-native';
+import { View, Picker, Image } from 'react-native';
 import { Button, InputItem, Icon, Toast } from '@ant-design/react-native';
 import ajax from '../../../services';
 import { UserRole } from '../../redux/user-reducer';

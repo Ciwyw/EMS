@@ -18,15 +18,17 @@ interface IProps {
 
 interface IState {
     farmList: IFarm[],
+    loading: boolean
 }
 
 class Admin extends React.Component<IProps, IState> {
     
     state: IState = {
-        farmList: []
+        farmList: [],
+        loading: true
     }
     render() {
-        const {  farmList } = this.state;
+        const { farmList, loading } = this.state;
         const src = this.props.avatar ? { uri: this.props.avatar} : require('../../../assets/avatar.png');
         const headerLeft = (
             <TouchableOpacity onPress={this.handlePressUser}>
@@ -41,13 +43,14 @@ class Admin extends React.Component<IProps, IState> {
                     right={headerRight}
                 />
                 {
-                    farmList.length === 0 ?
-                        <Empty hint="还没有养殖场，点击右上角添加吧～" /> :
-                        <FlatList 
-                            data={farmList} 
-                            renderItem={({item}) => <Card key={item.id} info={item} history={this.props.history}/>}
-                            style={styles.list}
-                        />
+                   loading ?
+                    null :
+                    <FlatList 
+                        data={farmList} 
+                        renderItem={({item}) => <Card key={item.id} info={item} history={this.props.history}/>}
+                        ListEmptyComponent={<Empty hint="还没有养殖场，点击右上角添加吧～" />}
+                        style={styles.list}
+                    />
                 }
             </View>
         )
@@ -72,7 +75,8 @@ class Admin extends React.Component<IProps, IState> {
             return;
         }
         this.setState({
-            farmList: res.data
+            farmList: res.data,
+            loading: false
         })
     }
 

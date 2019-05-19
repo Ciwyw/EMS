@@ -18,7 +18,10 @@ class Card extends React.Component<IProps> {
                         <View style={styles.info}>
                             <View>
                                 <Text style={styles.name}>{info.farm_name}</Text>
-                                <Text>{info.address}</Text>
+                                <View style={styles.address}>
+                                    <Icon size="xs" name="environment" color="#f45a8d"/>
+                                    <Text>{info.address}</Text>
+                                </View>
                             </View>
                             <View style={styles.link}>
                                 <Text style={{ color: '#f45a8d' }}>详情</Text><Icon name="right" color="#f45a8d" />
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         flexDirection: 'row',
         padding: 20,
-        borderRadius: 5
+        borderRadius: 10
     },
     image: {
         width: 90,
@@ -48,12 +51,15 @@ const styles = StyleSheet.create({
     },
     info: {
         flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between'
     },
     name: {
-        fontSize: 19,
-        marginBottom: 7
+        fontSize: 18,
+        marginBottom: 7,
+        color: '#000'
+    },
+    address: {
+        flexDirection: 'row'
     },
     link: {
         flexDirection: 'row',
