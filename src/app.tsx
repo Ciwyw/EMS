@@ -12,6 +12,8 @@ import Monitor from './containers/farm/monitor';
 import User from './containers/user';
 import UserDetail from './containers/user/detail';
 import UserUpdate from './containers/user/update';
+import UserAvatar from './containers/user/avatar';
+
 const App = () => {
     return (
         <Provider store={store}>
@@ -25,6 +27,7 @@ const App = () => {
                         <Route path="/farm/:id" component={Farm} exact />
                         <Route path="/monitor/:farmId/:farmName" component={Monitor} exact />
                         <Route path="/user/detail" component={UserDetail} exact />
+                        <Route path="/user/avatar" component={UserAvatar} exact />
                         <Route path="/user/update/:type" component={UserUpdate} exact />
                         <Route path="/user" component={User} exact />
                     </Switch>

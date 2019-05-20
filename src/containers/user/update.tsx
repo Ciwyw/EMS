@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text } from 'react-native';
-import { List, InputItem, TextareaItem, Toast, ImagePicker } from '@ant-design/react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { InputItem, Toast, List } from '@ant-design/react-native';
+import ajax from '../../../services';
+import { userFetchInfo } from '../../redux/user-action';
+import store from '../../redux/user-store';
 import Header from '../../components/header';
 import { IUserState } from '../../redux/user-reducer';
 
@@ -26,56 +29,183 @@ interface IProps {
 interface IState {
     user_name: string,
     phone_number: string,
-    pwd: string
+    old_pwd: string,
+    new_pwd: string,
+    confirm_pwd: string
 }
 
-const renderHeaderTitle = (updateType: UpdateType) => {
-    switch(updateType) {
-        case UpdateType.Name: 
-            return '用户名修改';
-        case UpdateType.Mobile:
-            return '手机号修改';
-        case UpdateType.Pwd:
-            return '密码修改';
-        default:
-            return '404';
-    }
+const renderRight = (fn: () => void) => {
+    return (
+        <TouchableOpacity onPress={fn}>
+            <View><Text style={{ color: '#fff' }}>保存</Text></View>
+        </TouchableOpacity>
+    )
 }
+
+const ListItem = List.Item;
 class UserUpdate extends React.Component<IProps, IState> {
 
     state: IState = {
-        user_name: '',
-        phone_number: '',
-        pwd: '' 
+        user_name: this.props.user.user_name,
+        phone_number: this.props.user.phone_number,
+        old_pwd: '',
+        new_pwd: '',
+        confirm_pwd: ''
     }
 
     renderUpdateName = () => {
         const { user_name } = this.state;
         return (
-            <InputItem clear/>
+            <View>
+                <Header 
+                    title="用户名修改" 
+                    right={renderRight(this.handleSubmitName)} 
+                    history={this.props.history}
+                />
+                <InputItem 
+                    value={user_name} 
+                    clear
+                    onChange={(val: string) => this.handleChangeState('user_name', val)}
+                />
+            </View>
         );
     }
+    
     renderUpdateMobile = () => {
-        return (
-            <InputItem clear/>
-        );
-    }
-    renderUpdatePwd = () => {
-        return (
-            <InputItem clear/>
-        );
-    }
-    render() {
-        const { history, match } = this.props;
-        const updateType: UpdateType = parseInt(match.params.type);
+        const { phone_number } = this.state;
         return (
             <View>
-                <Header title={renderHeaderTitle(updateType)} history={history} />
-                {updateType === UpdateType.Name ? this.renderUpdateName() : null}
-                {updateType === UpdateType.Mobile ? this.renderUpdateMobile() : null}
-                {updateType === UpdateType.Pwd ? this.renderUpdatePwd() : null}
+                <Header 
+                    title="手机号修改" 
+                    right={renderRight(this.handleSubmitMobile)} 
+                    history={this.props.history}
+                />
+                <InputItem 
+                    value={phone_number} 
+                    clear
+                    onChange={(val: string) => this.handleChangeState('phone_number', val)}
+                />
             </View>
+        );
+    }
+
+    renderUpdatePwd = () => {
+        const { old_pwd, new_pwd, confirm_pwd } = this.state;
+        return (
+            <View>
+                <Header 
+                    title="密码修改" 
+                    right={renderRight(this.handleSubmitPwd)} 
+                    history={this.props.history}
+                />
+                <List>
+                    <InputItem 
+                        value={old_pwd} 
+                        clear
+                        type="password"
+                        onChange={(val: string) => this.handleChangeState('old_pwd', val)}
+                        placeholder="请输入原密码"
+                    >
+                        原密码
+                    </InputItem>
+                    <InputItem 
+                        value={new_pwd} 
+                        clear
+                        type="password"
+                        onChange={(val: string) => this.handleChangeState('new_pwd', val)}
+                        placeholder="请输入新密码"
+                    >
+                        新密码
+                    </InputItem>
+                    <InputItem 
+                        value={confirm_pwd} 
+                        clear
+                        type="password"
+                        onChange={(val: string) => this.handleChangeState('confirm_pwd', val)}
+                        placeholder="请再次输入密码"
+                    >
+                        确认密码
+                    </InputItem>
+                </List>
+            </View>
+        );
+    }
+
+    renderUpdate = () => {
+        const updateType: UpdateType = parseInt(this.props.match.params.type);
+        switch(updateType) {
+            case UpdateType.Name: 
+                return this.renderUpdateName();
+            case UpdateType.Mobile:
+                return this.renderUpdateMobile();
+            case UpdateType.Pwd:
+                return this.renderUpdatePwd();
+            default:
+                return;
+        }
+    }
+
+    render() {
+        return (
+            <View>{this.renderUpdate()}</View>
         )
+    }
+
+    handleChangeState = (key: string, val: string) => {
+        this.setState({
+            [key]: val
+        })
+    }
+
+    handleSubmitName = async () => {
+        const { user_name } = this.state;
+        if(!user_name) {
+            Toast.fail('请输入用户名!',1);
+            return;
+        }
+        const res: IResponse = await ajax('/user/update/name', {user_name});
+        if(res.error) {
+            Toast.fail(res.msg, 1);
+            return;
+        }
+        Toast.success('修改成功!',1);
+        store.dispatch(userFetchInfo({user_name}));
+        this.props.history.goBack();
+    }
+
+    handleSubmitMobile = async () => {
+        const { phone_number } = this.state;
+        if(!phone_number || !/^1\d{10}$/.test(phone_number)) {
+            Toast.fail('请输入正确的手机号!',1);
+            return;
+        }
+        const res: IResponse = await ajax('/user/update/mobile', {phone_number});
+        if(res.error) {
+            Toast.fail(res.msg, 1);
+            return;
+        }
+        Toast.success('修改成功!',1);
+        store.dispatch(userFetchInfo({phone_number}));
+        this.props.history.goBack();
+    }
+
+    handleSubmitPwd = async () => {
+        const { old_pwd, new_pwd, confirm_pwd } = this.state;
+        if(!old_pwd || !new_pwd || !confirm_pwd) {
+            Toast.fail('请输入密码！', 1);
+            return;
+        }
+        if(new_pwd !== confirm_pwd) {
+            Toast.fail('密码不一致!', 1);
+            return;
+        }
+        const res: IResponse = await ajax('/user/update/pwd', {old_pwd, new_pwd});
+        if(res.error) {
+            Toast.fail(res.msg, 1);
+            return;
+        }
+        Toast.success('修改成功!',1);
+        this.props.history.goBack();
     }
 }
 

@@ -90,12 +90,14 @@ const styles = StyleSheet.create({
     avatar: {
         width: 30,
         height: 30,
-        borderRadius: 15
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#fff'
     }
 })
 
-export default connect((state: IUserState) => {
+export default connect(({user} : {user: IUserState}) => {
     return {
-        avatar: state.avatar
+        avatar: user.avatar
     }
 })(Admin);

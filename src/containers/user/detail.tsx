@@ -31,7 +31,7 @@ class UserDetail extends React.Component<IProps, IState> {
             <View>
                 <Header title="个人中心" history={this.props.history}/>
                 <List>
-                    <ListItem extra={avatarFragement} arrow="horizontal">头像</ListItem>
+                    <ListItem onPress={this.handldCheckAvatar} extra={avatarFragement} arrow="horizontal">头像</ListItem>
                     <ListItem onPress={this.handleUpdate.bind(this, UpdateType.Name)} extra={user.user_name} arrow="horizontal">用户名</ListItem>
                     <ListItem extra={role}>身份</ListItem>
                     <ListItem onPress={this.handleUpdate.bind(this, UpdateType.Mobile)} extra={user.phone_number} arrow="horizontal">手机号</ListItem>
@@ -41,6 +41,10 @@ class UserDetail extends React.Component<IProps, IState> {
                 </List>
             </View>
         )
+    }
+
+    handldCheckAvatar = () => {
+        this.props.history.push('/user/avatar');
     }
 
     handleUpdate (type: UpdateType) {

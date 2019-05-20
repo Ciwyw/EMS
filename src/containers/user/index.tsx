@@ -105,9 +105,9 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     avatar: {
-        width: 70,
-        height: 70,
-        borderRadius: 35
+        width: 80,
+        height: 80,
+        borderRadius: 40
     },
     userName: {
         color: '#f45a8d',

@@ -10,14 +10,15 @@ import Employ from './employ';
 interface IProps {
     history: {
         push: (path: string) => void
-    }
+    },
+
 }
 
 interface IState {
     role: UserRole
 }
 
-export default class Home extends React.Component<IProps, IState> {
+class Home extends React.Component<IProps, IState> {
 
     state: IState = {
         role: UserRole.Unknown
@@ -46,3 +47,5 @@ export default class Home extends React.Component<IProps, IState> {
         store.dispatch(userFetchInfo(res.data));
     }
 }
+
+export default Home;
