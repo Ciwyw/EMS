@@ -56,7 +56,7 @@ class Monitor extends React.Component<IProps, IState> {
                     </View>
                     <Echarts option={this.initEchartOption()} height={350} />
                     <ScrollView style={styles.tableWrapper}>
-                        <Table borderStyle={{borderColor: '#f45a8d'}}>
+                        <Table borderStyle={{borderColor: '#fa7399'}}>
                             <Row data={tableHead} style={styles.tableHead} textStyle={styles.textHead}/>
                             <Rows data={this.initTableData()} textStyle={styles.textBody}/>
                         </Table>

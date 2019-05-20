@@ -7,7 +7,6 @@ declare interface IResponse {
     data?: any,
     msg?: string
 }
-
 declare interface IFile {
     url: string
 }

@@ -31,12 +31,11 @@ class UserAvatar extends React.Component<IProps, IState> {
     }
     render() {
         const { history, avatar } = this.props;
-        const src = avatar ? { uri: avatar} : require('../../assets/avatar.png');
         return (
             <View>
                 <Header title="头像" history={history} right={this.renderHeaderRight()}/>
                 <View style={styles.body}>
-                    <Image style={styles.image} source={src}/>
+                    <Image style={styles.image} source={{ uri: avatar}}/>
                 </View>
             </View>
         )

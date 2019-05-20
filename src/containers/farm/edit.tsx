@@ -163,8 +163,6 @@ class Farm extends React.Component<IProps, IState> {
             uri,
             farmInfo: res.data,
             edit: true
-        }, () => {
-            console.log(this.state.farmInfo, 'farminfo');
         });
     }
 
@@ -198,7 +196,7 @@ class Farm extends React.Component<IProps, IState> {
             const res: IResponse = await ajax(api, {
                 ...values,
                 image: uri,
-                id: this.props.match.params.id
+                id: parseInt(this.props.match.params.id)
             })
             if(res.error) {
                 Toast.fail(res.msg, 1);

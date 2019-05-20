@@ -29,10 +29,9 @@ class Admin extends React.Component<IProps, IState> {
     }
     render() {
         const { farmList, loading } = this.state;
-        const src = this.props.avatar ? { uri: this.props.avatar} : require('../../../assets/avatar.png');
         const headerLeft = (
             <TouchableOpacity onPress={this.handlePressUser}>
-                <Image source={src} style={styles.avatar}/>
+                <Image source={{ uri: this.props.avatar}} style={styles.avatar}/>
             </TouchableOpacity>);
         const headerRight = <Icon name="plus" color="#fff" onPress={this.handlePressAdd}/>;
         return (

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { List, Icon, Button, Modal, Toast } from '@ant-design/react-native';
-import { IUserState, UserRole } from '../../redux/user-reducer';
+import { IUserState, UserRole, Sex } from '../../redux/user-reducer';
 import ajax from '../../../services';
 import Header from '../../components/header';
 
@@ -24,12 +24,15 @@ class User extends React.Component<IProps, IState> {
     render () {
         const { user } = this.props;
         const isAdmin = user.role === UserRole.Admin;
-        const src = user.avatar ? { uri: user.avatar} : require('../../assets/avatar.png');
+        const isMale = user.sex === Sex.Male;
         return (
             <View>
                 <Header title="个人中心" history={this.props.history}/>
                 <View style={styles.baseinfo}>
-                    <Image style={styles.avatar} source={src} />
+                    <View style={styles.wrapper}>
+                        <Image style={styles.avatar} source={{ uri: user.avatar}} />
+                        <Icon style={styles.sex} name={isMale ? 'man' : 'woman'} color='#fa7399'/>
+                    </View>
                     <Text style={styles.userName}>{user.user_name} · {isAdmin ? '管理员':'养殖工人'}</Text>
                 </View>
                 <List>
@@ -43,7 +46,8 @@ class User extends React.Component<IProps, IState> {
                     </ListItem>
                    {
                        isAdmin ?
-                       <ListItem 
+                       <ListItem    
+                            onPress={this.handleEmploy}
                             arrow="horizontal" 
                             thumb={<Icon style={styles.icon} name="bulb" color="#42c02d"/>}
                         >
@@ -75,6 +79,10 @@ class User extends React.Component<IProps, IState> {
         this.props.history.push('/user/detail');
     }
 
+    handleEmploy = () => {
+        this.props.history.push('/employee');
+    }
+
     handleLogout = () => {
         Modal.alert('确定要退出吗？', '', [
             {
@@ -104,13 +112,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 15
     },
+    wrapper: {
+        position: 'relative'
+    },
     avatar: {
         width: 80,
         height: 80,
         borderRadius: 40
     },
+    sex: {
+        position: 'absolute',
+        bottom: -6,
+        right: 13
+    },
     userName: {
-        color: '#f45a8d',
+        color: '#fa7399',
         fontSize: 16,
         marginTop: 10
     },
@@ -125,13 +141,13 @@ const styles = StyleSheet.create({
     },
     btn: {
         width: '90%',
-        backgroundColor: '#f45a8d',
+        backgroundColor: '#fa7399',
         borderWidth: 0,
         alignSelf: 'center',
         marginTop: 50
     },
     activeBtn: {
-        backgroundColor: '#f45a8d'
+        backgroundColor: '#fa7399'
     }
 })
 

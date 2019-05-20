@@ -24,8 +24,7 @@ class UserDetail extends React.Component<IProps, IState> {
 
     render() {
         const { user } = this.props;
-        const src = user.avatar ? { uri: user.avatar} : require('../../assets/avatar.png');
-        const avatarFragement = <Image source={src} style={styles.avatar}/>;
+        const avatarFragement = <Image source={{uri: user.avatar}} style={styles.avatar}/>;
         const role = user.role === UserRole.Admin ? '管理员':'养殖工人';
         return (
             <View>

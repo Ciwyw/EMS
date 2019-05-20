@@ -45,7 +45,7 @@ class Farm extends React.Component<IProps, IState> {
                 <Header title={farmInfo.farm_name} history={this.props.history}/>
                 <SwipeAction autoClose right={rightAction} style={{ backgroundColor: '#fff' }}>
                     <View style={styles.baseinfo}>
-                        <Image style={styles.image} source={{ uri: farmInfo.image || ''}} />
+                        <Image style={styles.image} source={{ uri: farmInfo.image }} />
                         <View style={styles.detail}>
                             <Text style={styles.farmName}>{farmInfo.farm_name}</Text>
                             <Text>{farmInfo.stall_num}间牛舍</Text>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 0,
         bottom: 120,
-        backgroundColor: '#f45a8d',
+        backgroundColor: '#fa7399',
         paddingLeft: 15,
         borderTopLeftRadius: 25,
         borderBottomLeftRadius: 25,

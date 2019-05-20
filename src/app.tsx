@@ -13,6 +13,9 @@ import User from './containers/user';
 import UserDetail from './containers/user/detail';
 import UserUpdate from './containers/user/update';
 import UserAvatar from './containers/user/avatar';
+import Employee from './containers/employee';
+import EmployeeEdit from './containers/employee/edit';
+import EmployeeDetail from './containers/employee/detail';
 
 const App = () => {
     return (
@@ -30,6 +33,10 @@ const App = () => {
                         <Route path="/user/avatar" component={UserAvatar} exact />
                         <Route path="/user/update/:type" component={UserUpdate} exact />
                         <Route path="/user" component={User} exact />
+                        <Route path="/employee/add" component={EmployeeEdit} exact />
+                        <Route path="/employee/edit/:id" component={EmployeeEdit} exact />
+                        <Route path="/employee/:id" component={EmployeeDetail} exact />
+                        <Route path="/employee" component={Employee} exact />
                     </Switch>
                 </NativeRouter>
             </ProviderComponent>

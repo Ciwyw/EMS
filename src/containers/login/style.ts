@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
     },
     btn: {
         width: '100%',
-        backgroundColor: '#f45a8d',
+        backgroundColor: '#fa7399',
         borderWidth: 0,
     },
     activeBtn: {
-        backgroundColor: '#f45a8d'
+        backgroundColor: '#fa7399'
     }
 })
 

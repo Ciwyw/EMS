@@ -14,17 +14,17 @@ class Card extends React.Component<IProps> {
         return (
                 <TouchableOpacity onPress={() => this.handleGetDetail(info.id)}>
                     <View style={styles.card}>
-                        <Image style={styles.image} source={{ uri: info.image || ''}} />
+                        <Image style={styles.image} source={{ uri: info.image }} />
                         <View style={styles.info}>
                             <View>
                                 <Text style={styles.name}>{info.farm_name}</Text>
                                 <View style={styles.address}>
-                                    <Icon size="xs" name="environment" color="#f45a8d"/>
+                                    <Icon size="xs" name="environment" color="#fa7399"/>
                                     <Text>{info.address}</Text>
                                 </View>
                             </View>
                             <View style={styles.link}>
-                                <Text style={{ color: '#f45a8d' }}>详情</Text><Icon name="right" color="#f45a8d" />
+                                <Text style={{ color: '#fa7399' }}>详情</Text><Icon name="right" color="#fa7399" />
                             </View>
                         </View>
                     </View>
