@@ -5,7 +5,6 @@ import { List, InputItem, TextareaItem, Toast, ImagePicker } from '@ant-design/r
 import ajax from '../../../services';
 import upload from '../../utils/upload';
 import { requestCameraPermission } from '../../utils/permission';
-import InputNumber from '../../components/input-number';
 import Header from '../../components/header';
 
 interface IProps {
@@ -22,18 +21,25 @@ interface IProps {
 
 interface IState {
     files: IFile[],
-    uri: string,
+    url: string,
     farmInfo: IFarm,
     edit: boolean
 }
 
 const Item = List.Item;
 
+const normalizeToInt = (val: string) => {
+    return val.replace(/[^0-9]/, '');
+}
+
+const normalizeToFloat = (val: string) => {
+    return val.replace(/[^0-9.]/, '');
+}
 class Farm extends React.Component<IProps, IState> {
 
     state: IState = {
         files: [],
-        uri: '',
+        url: '',
         farmInfo: {},
         edit: false
     }
@@ -64,10 +70,11 @@ class Farm extends React.Component<IProps, IState> {
                     }
                      {
                         getFieldDecorator('stall_num',{
-                            initialValue: farmInfo.farm_name || 10,
-                            rules: [{ required: true }]
+                            initialValue: farmInfo.stall_num && `${farmInfo.stall_num}` || '0',
+                            rules: [{ required: true }],
+                            normalize: normalizeToInt
                         })(
-                            <InputNumber extra="间 ">牛舍</InputNumber>
+                            <InputItem type="number" clear>牛舍</InputItem>                           
                         )
                     }
                     <Item
@@ -76,6 +83,7 @@ class Farm extends React.Component<IProps, IState> {
                                 files={files} 
                                 selectable={files.length < 1}
                                 onChange={this.handlePickImage}
+
                             />}
                         multipleLine
                     >
@@ -93,44 +101,50 @@ class Farm extends React.Component<IProps, IState> {
                 <List renderHeader="环境参数阈值">
                     {
                         getFieldDecorator('temp_thres',{
-                            initialValue: farmInfo.temp_thres || 0
+                            initialValue: farmInfo.temp_thres && `${farmInfo.temp_thres}` || '0',
+                            normalize: normalizeToFloat
                         })(
-                            <InputNumber extra="℃ ">温度</InputNumber>
+                            <InputItem type="number" clear extra="℃ ">温度</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('humi_thres',{
-                            initialValue: farmInfo.humi_thres || 0
+                            initialValue: farmInfo.humi_thres && `${farmInfo.humi_thres}` || '0',
+                            normalize: normalizeToFloat
                         })(
-                            <InputNumber extra="% ">湿度</InputNumber>
+                            <InputItem type="number" clear extra="% ">湿度</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('illum_thres',{
-                            initialValue: farmInfo.illum_thres || 0
+                            initialValue: farmInfo.illum_thres && `${farmInfo.illum_thres}` || '0',
+                            normalize: normalizeToFloat
                         })(
-                            <InputNumber extra="lx">光照度</InputNumber>
+                            <InputItem type="number" clear extra="lx">光照度</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('amm_thres',{
-                            initialValue: farmInfo.amm_thres || 0
+                            initialValue: farmInfo.amm_thres && `${farmInfo.amm_thres}` || '0',
+                            normalize: normalizeToFloat
                         })(
-                            <InputNumber extra="ppm">氨气</InputNumber>
+                            <InputItem type="number" clear extra="ppm">氨气</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('h2s_thres',{
-                            initialValue: farmInfo.h2s_thres || 0
+                            initialValue: farmInfo.h2s_thres && `${farmInfo.h2s_thres}` || '0',
+                            normalize: normalizeToFloat
                         })(
-                            <InputNumber extra="ppm">H2S</InputNumber>
+                            <InputItem type="number" clear extra="ppm">H2S</InputItem>                           
                         )
                     }
-                     {
+                    {
                         getFieldDecorator('co2_thres',{
-                            initialValue: farmInfo.co2_thres || 0
+                            initialValue: farmInfo.co2_thres && `${farmInfo.co2_thres}` || '0',
+                            normalize: normalizeToFloat
                         })(
-                            <InputNumber extra="ppm">CO2</InputNumber>
+                            <InputItem type="number" clear extra="ppm">CO2</InputItem>                           
                         )
                     }
                 </List>
@@ -156,46 +170,58 @@ class Farm extends React.Component<IProps, IState> {
             Toast.fail(res.msg, 1);
             return;
         }
-        const uri = res.data.image
-        const files = [{ url: uri }];
+        const url = res.data.image
+        const files = [{ url }];
         this.setState({
             files,
-            uri,
+            url,
             farmInfo: res.data,
             edit: true
         });
     }
 
     handlePickImage = async ( files: IFile[]) => {
-        const res: IResponse = await upload(files[0].url);
-        if(res.error) {
-            Toast.fail('图片上传失败', 1);
+        if(files.length === 0) { //删除
+            this.setState({
+                files,
+                url: ''
+            });
             return;
         }
-        Toast.success('图片上传成功', 1);
+        const res: IResponse = await upload(files[0].url);
+        if(res.error) {
+            Toast.fail('图片上传失败!', 1);
+            return;
+        }
+        Toast.success('图片上传成功!', 1);
         this.setState({
             files,
-            uri: res.data.uri
-        }, () => {
-            console.log(this.state.uri);
+            url: res.data.url
         });
     }
 
     handleSubmit = () => {
-        const { uri, edit } = this.state;
+        const { url, edit } = this.state;
         this.props.form.validateFields( async (error: any,values: any) => {
             if(error) {
                 Toast.fail('请完善所有信息！', 1);
                 return;
             }
-            if(!uri) {
+            if(!url) {
                 Toast.fail('请上传养殖场图片！', 1);
                 return;
             }
             const api = edit ? '/farm/update' : '/farm/add';
             const res: IResponse = await ajax(api, {
                 ...values,
-                image: uri,
+                image: url,
+                stall_num: parseInt(values.stall_num),
+                temp_thres: parseFloat(values.temp_thres),
+                humi_thres: parseFloat(values.humi_thres),
+                illum_thres: parseFloat(values.illum_thres),
+                amm_thres: parseFloat(values.amm_thres),
+                h2s_thres: parseFloat(values.h2s_thres),
+                co2_thres: parseFloat(values.co2_thres),
                 id: parseInt(this.props.match.params.id)
             })
             if(res.error) {
@@ -205,7 +231,7 @@ class Farm extends React.Component<IProps, IState> {
             Toast.success('保存成功', 1);
             setTimeout(() => {
                 this.props.history.goBack();
-            }, 1000);
+            }, 0);
         });
     }
 }

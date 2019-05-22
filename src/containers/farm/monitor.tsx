@@ -34,6 +34,9 @@ class Monitor extends React.Component<IProps, IState> {
         envList: [],
         date: ''
     }
+
+    private interval: number | null = null;
+
     render() {   
         const { date } = this.state;  
         return (
@@ -41,12 +44,12 @@ class Monitor extends React.Component<IProps, IState> {
                 <Header title={this.props.match.params.farmName} history={this.props.history}/>
                 <View style={styles.body}>
                     <View>
-                        <Text style={styles.chartTitle}>养殖场环境变化趋势图</Text>
+                        <Text style={styles.chartTitle}>环境参数变化趋势图</Text>
                         <DatePicker 
                             date={date}
                             mode="date"
                             format="YYYY-MM-DD"
-                            minDate="2019-05-18"
+                            minDate="2019-05-22"
                             maxDate={date}
                             confirmBtnText="确定"
                             cancelBtnText="取消"
@@ -67,30 +70,48 @@ class Monitor extends React.Component<IProps, IState> {
     }
 
     componentDidMount () {
-        this.circleFetchEnvData();
         this.setState({
             date: TODAY
         }, () => {
-            console.log(this.state.date, 'date')
+            this.setTimer();
         });
     }
 
-    circleFetchEnvData = async () => {
+    setTimer = async () => {
+        this.fetchEnvList();
+        this.interval = setInterval(() => {
+            if(this.state.date !== TODAY) {
+                this.clearTimer();
+                return;
+            }
+            this.fetchEnvList();
+        }, 1000 * 60)
+    }
+
+    fetchEnvList = async () => {
+        const { date } = this.state;
         const id = parseInt(this.props.match.params.farmId);
-        const res: IResponse = await ajax('/farm/env', {id});
+        const res: IResponse = await ajax('/farm/env', {id, date});
         if(res.error) {
             Toast.fail(res.msg, 1);
             return;
         }
         this.setState({
             envList: res.data
-        }, () => {
-            console.log(this.state.envList, 'envList')
         })
     }
 
+    clearTimer = () => {
+        if(this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+    }
+
     handleSelectDate = (date: string) => {
-        this.setState({ date });
+        this.setState({ date }, () => {
+            this.setTimer();
+        });
     }
 
     initEchartOption = () => {
@@ -181,7 +202,8 @@ const styles = StyleSheet.create({
     },
     chartTitle: {
         fontSize: 18,
-        fontWeight: '600'
+        fontWeight: '600',
+        marginTop: 20
     },
     datePicker: {
         alignSelf: 'center',

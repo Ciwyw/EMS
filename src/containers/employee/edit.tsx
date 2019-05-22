@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { List, InputItem, Picker, Toast } from '@ant-design/react-native';
+import { List, InputItem, Picker, Toast, Modal } from '@ant-design/react-native';
 import { createForm } from 'rc-form';
 import ajax from '../../../services';
 import config from '../../../services/config';
@@ -42,9 +42,6 @@ const sexList = [
         label: '男'
     }
 ];
-
-const DEFAULT_PWD = '123456';
-const DEFAULT_AVATAR = `${config.BASE_URL}/images/avatar.png`;
 
 const formatFarmList = (farmList: IFarm[]) => {
     return farmList.map(farm => {
@@ -145,7 +142,15 @@ class EmployeeEdit extends React.Component<IProps, IState> {
         }
         this.setState({
             farmList: formatFarmList(res.data)
+        }, () => {
+            if(this.state.farmList.length === 0) {
+                Modal.alert('养殖场为空', '请先创建养殖场再新增工人', [{
+                    text: '好的',
+                    onPress: () => this.props.history.goBack()
+                }])
+            }
         });
+
     }
 
     handleSubmit = () => {
@@ -168,8 +173,6 @@ class EmployeeEdit extends React.Component<IProps, IState> {
                 farm_name,
                 sex: values.sex[0],
                 role: UserRole.Employee,
-                password: DEFAULT_PWD,
-                avatar: DEFAULT_AVATAR,
                 id: parseInt(this.props.match.params.id)
             })
             if(res.error) {

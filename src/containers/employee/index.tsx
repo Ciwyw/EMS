@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import {  Toast, List } from '@ant-design/react-native';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import Empty from '../../components/empty';
 import { IUserState, UserRole } from '../../redux/user-reducer';
 import ajax from '../../../services';
 
@@ -24,24 +25,29 @@ export default class Employee extends React.Component<IProps, IState> {
         employeeList: []
     }
     render() {
+        const { employeeList } = this.state;
         const headerRight = <Icon name="plus" color="#fff" onPress={this.handlePressAdd}/>;
         return (
             <View>
                 <Header title="工人管理" right={headerRight} history={this.props.history}/>
-                <List>
-                    {
-                        this.state.employeeList.map((employee) => (
-                            <ListItem
-                                key={employee.id} 
-                                thumb={employee.avatar}
-                                onPress={() => this.handleGetDetail(employee.id)}
-                                arrow="horizontal"
-                            >
-                                {employee.user_name}
-                            </ListItem>
-                        ))
-                    }
-                </List>
+                {
+                    employeeList.length === 0 ?
+                    <Empty hint="还没有工人数据，点击右上角添加吧～" /> :
+                    <List>
+                        {
+                            employeeList.map((employee) => (
+                                <ListItem
+                                    key={employee.id} 
+                                    thumb={employee.avatar}
+                                    onPress={() => this.handleGetDetail(employee.id)}
+                                    arrow="horizontal"
+                                >
+                                    {employee.user_name}
+                                </ListItem>
+                            ))
+                        }
+                    </List>
+                }
             </View>
         )
     }

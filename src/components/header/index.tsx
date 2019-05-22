@@ -1,14 +1,15 @@
 import React, { ReactNode } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import Icon from '../icon';
 import styles from './style';
 
 interface IProps {
     title: string,
-    left?: ReactNode,
+    avatar?: string,
     right?: ReactNode,
-    history?: {
-        goBack: () => void
+    history: {
+        push?: (path: string) => void,
+        goBack?: () => void
     }
 }
 
@@ -18,10 +19,17 @@ interface IState {
 export default class Header extends React.Component<IProps, IState> {
 
     render() {
-        const { title, left, right } = this.props;
+        const { title, avatar, right } = this.props;
         return (
             <View style={styles.header}>
-                { left ? left : <Icon name="arrow-left" color="#fff" onPress={this.handleBack}/> }
+                { 
+                    avatar ?
+                    <TouchableOpacity onPress={this.handlePressUser}>
+                        <Image source={{ uri: avatar}} style={styles.avatar}/>
+                    </TouchableOpacity>
+                     :
+                    <Icon name="arrow-left" color="#fff" onPress={this.handleBack}/>
+                }
                 <Text style={styles.title}>{title}</Text>
                 { right ? right : <View /> }
             </View>
@@ -30,6 +38,10 @@ export default class Header extends React.Component<IProps, IState> {
 
     handleBack = () => {
         this.props.history && this.props.history.goBack();
+    }
+
+    handlePressUser = () => {
+        this.props.history && this.props.history.push('/user');
     }
 
 }

@@ -15,6 +15,13 @@ const styles = StyleSheet.create({
         maxWidth: '50%',
         overflow: 'hidden',
         color: '#fff'
+    },
+    avatar: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#fff'
     }
 })
 

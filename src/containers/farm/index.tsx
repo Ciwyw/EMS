@@ -3,17 +3,20 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { List, Toast, Modal, SwipeAction, Icon } from '@ant-design/react-native';
 import ajax from '../../../services';
 import Header from '../../components/header';
+import { IUserState } from '../../redux/user-reducer';
 
 interface IProps {
     history: {
         push: (path: string) => void,
         goBack: () => void
     },
-    match: {
+    match?: {
         params: {
             id: string
         }
-    }
+    },
+    user?: IUserState,
+    asEmploy?: boolean
 }
 
 interface IState {
@@ -26,24 +29,35 @@ class Farm extends React.Component<IProps, IState> {
         farmInfo: {}
     }
 
-    render() {
-        const { farmInfo } = this.state;
+    private id: number;
+
+    renderAction = () => {
         const rightAction = [
             {
                 text: '编辑',
                 onPress: () => this.handleEdit(),
-                style: { backgroundColor: 'rgb(39, 120, 255)', color: '#fff' },
-            },
-            {
-                text: '删除',
-                onPress: () => this.handleDelete(),
-                style: { backgroundColor: '#f00', color: '#fff' },
+                style: { backgroundColor: '#87CEFA', color: '#fff' },
             }
-        ]
+        ];
+        const deleteItem = {
+            text: '删除',
+            onPress: () => this.handleDelete(),
+            style: { backgroundColor: '#FFC1C1', color: '#fff' },
+        };
+        return !this.props.asEmploy && [...rightAction, deleteItem] || rightAction;
+    }
+
+    render() {
+        const { farmInfo } = this.state;
+        const { user, asEmploy, history } = this.props;
         return (
             <View style={styles.farm}>
-                <Header title={farmInfo.farm_name} history={this.props.history}/>
-                <SwipeAction autoClose right={rightAction} style={{ backgroundColor: '#fff' }}>
+                <Header 
+                    title={farmInfo.farm_name} 
+                    avatar={asEmploy ? user.avatar : ''}
+                    history={history}
+                />
+                <SwipeAction autoClose right={this.renderAction()} style={{ backgroundColor: '#fff' }}>
                     <View style={styles.baseinfo}>
                         <Image style={styles.image} source={{ uri: farmInfo.image }} />
                         <View style={styles.detail}>
@@ -61,22 +75,22 @@ class Farm extends React.Component<IProps, IState> {
                     <Item extra={<Text>{farmInfo.h2s_thres}</Text>} arrow="empty">H2S (ppm)</Item>
                     <Item extra={<Text>{farmInfo.co2_thres}</Text>} arrow="empty">CO2 (ppm)</Item>
                 </List>
-                <View style={styles.monitor}>
-                    <TouchableOpacity onPress={this.handleMonitor}>
-                        <Text style={styles.text}>环境监控</Text>
-                    </TouchableOpacity>                    
-                </View>
+                <TouchableOpacity style={styles.monitor} onPress={this.handleMonitor}>
+                    <Text style={styles.text}>环境监控</Text>
+                    <Icon name="right" color="#fff" size="xs"/>
+                </TouchableOpacity>
             </View>
         )
     }
 
     componentDidMount() {
+        const { user, match, asEmploy } = this.props;
+        this.id = asEmploy ? user.farm_id : parseInt(match.params.id);
         this.fetchFarmInfo();
     }
 
     fetchFarmInfo = async () => {
-        const id = parseInt(this.props.match.params.id);
-        const res: IResponse = await ajax('/farm/info', {id});
+        const res: IResponse = await ajax('/farm/info', {id: this.id});
         if(res.error) {
             Toast.fail(res.msg, 1);
             return;
@@ -87,13 +101,13 @@ class Farm extends React.Component<IProps, IState> {
     }
 
     handleMonitor = () => {
-        const { id, farm_name } = this.state.farmInfo;
-        this.props.history.push(`/monitor/${id}/${farm_name}`);
+        const { farm_name } = this.state.farmInfo;
+        this.props.history.push(`/monitor/${this.id}/${farm_name}`);
 
     }
 
     handleEdit = () => {
-        this.props.history.push(`/farm/edit/${this.props.match.params.id}`);
+        this.props.history.push(`/farm/edit/${this.id}`);
     }
 
     handleDelete = () => {
@@ -101,14 +115,15 @@ class Farm extends React.Component<IProps, IState> {
             {
                 text: '删除',
                 onPress: async () => {
-                    const id = parseInt(this.props.match.params.id);
-                    const res: IResponse = await ajax('/farm/delete', {id});
+                    const res: IResponse = await ajax('/farm/delete', {id: this.id});
                     if(res.error) {
                         Toast.fail(res.msg, 1);
                         return;
                     }
                     Toast.success('删除成功', 1);
-                    this.props.history.goBack();
+                    setTimeout(() => {
+                        this.props.history.goBack();
+                    }, 0);
                 }
             },
             {
@@ -125,15 +140,16 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     monitor: {
-        width: 90,
+        width: 100,
         height: 40,
         position: 'absolute',
         right: 0,
         bottom: 120,
         backgroundColor: '#fa7399',
-        paddingLeft: 15,
+        paddingLeft: 10,
         borderTopLeftRadius: 25,
         borderBottomLeftRadius: 25,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },

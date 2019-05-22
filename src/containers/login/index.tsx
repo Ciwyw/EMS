@@ -7,7 +7,7 @@ import { UserRole } from '../../redux/user-reducer';
 import styles from './style';
 interface IProps {
     history: {
-        goBack: () => void
+        replace: (path: string) => void
     }
 }
 interface IState {
@@ -96,7 +96,7 @@ class Login extends React.Component<IProps, IState> {
             Toast.fail(res.msg, 1);
             return;
         }
-        this.props.history.goBack();
+        this.props.history.replace('/');
     }
 }
 

@@ -3,33 +3,34 @@ import { View, Text } from 'react-native';
 import ajax from '../../../services';
 import { userFetchInfo } from '../../redux/user-action';
 import store from '../../redux/user-store';
-import { UserRole } from '../../redux/user-reducer';
+import { IUserState, UserRole } from '../../redux/user-reducer';
 import Admin from './admin';
-import Employ from './employ';
+import Employ from '../farm';
 
 interface IProps {
     history: {
-        push: (path: string) => void
+        push: (path: string) => void,
+        goBack: () => void
     },
 
 }
 
 interface IState {
-    role: UserRole
+    user: IUserState
 }
 
 class Home extends React.Component<IProps, IState> {
 
     state: IState = {
-        role: UserRole.Unknown
+        user: {}
     }
 
     render() {
-        const { role } = this.state;
+        const { user } = this.state;
         return (
             <View>
-                { role === UserRole.Admin ? <Admin history={this.props.history}/> : null}
-                { role === UserRole.Employee ? <Employ /> : null}
+                { user.role === UserRole.Admin ? <Admin history={this.props.history}/> : null}
+                { user.role === UserRole.Employee ? <Employ asEmploy={true} user={user} history={this.props.history} /> : null}
             </View>
         )
     }
@@ -42,7 +43,7 @@ class Home extends React.Component<IProps, IState> {
         }
         console.log(res.data, 'userInfo----------');
         this.setState({
-            role: res.data.role
+            user: res.data
         });
         store.dispatch(userFetchInfo(res.data));
     }

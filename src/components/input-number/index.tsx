@@ -1,8 +1,8 @@
-import React, { ReactChildren, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { InputItem } from '@ant-design/react-native';
 
 interface IProps {
-    value?: number,
+    value: number,
     onChange?: (val: number) => void,
     extra?: string | ReactNode
 }
@@ -14,6 +14,7 @@ interface IState {
 export default class InputNumber extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
+        console.log(props, 'number');
         this.state = {
             str: `${props.value}`
         }

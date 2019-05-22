@@ -17,7 +17,8 @@ const styles = StyleSheet.create({
     empty: {
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 100
     },
     image: {
         width: 240,

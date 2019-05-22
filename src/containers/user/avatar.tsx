@@ -55,7 +55,7 @@ class UserAvatar extends React.Component<IProps, IState> {
             Toast.fail('头像上传失败', 1);
             return;
         }
-        const avatar = uploadRes.data.uri;
+        const avatar = uploadRes.data.url;
         const res: IResponse = await ajax('/user/update/avatar', {avatar});
         if(res.error) {
             Toast.fail(res.msg, 1);
