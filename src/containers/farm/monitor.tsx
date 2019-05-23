@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Toast } from '@ant-design/react-native';
+import { Toast, Icon, NoticeBar } from '@ant-design/react-native';
 import DatePicker from 'react-native-datepicker';
 import Header from '../../components/header';
+import Empty from '../../components/empty';
 import ajax from '../../../services';
 import { formatTime, formatDate } from '../../utils/time';
 import Echarts from 'native-echarts';
-import { Table, Row, Rows } from 'react-native-table-component';
+import { Table, Row, Rows, TableWrapper, Cell } from 'react-native-table-component';
 
 interface IProps {
     history: {
@@ -22,7 +23,9 @@ interface IProps {
 
 interface IState {
     envList: IEnv[],
-    date: string
+    farmInfo: IFarm,
+    date: string,
+    warnList: string[]
 }
 
 const TODAY = formatDate();
@@ -32,19 +35,30 @@ const tableHead = [...paramList, '时间'];
 class Monitor extends React.Component<IProps, IState> {
     state: IState = {
         envList: [],
-        date: ''
+        farmInfo: {},
+        date: '',
+        warnList: []
     }
 
     private interval: number | null = null;
+    private farmId: number;
 
     render() {   
-        const { date } = this.state;  
+        const { date, warnList, envList } = this.state; 
+        const showWarning = warnList.length !== 0 && date === TODAY; 
         return (
-            <View>
+            <ScrollView>
                 <Header title={this.props.match.params.farmName} history={this.props.history}/>
+                <NoticeBar 
+                    icon={<Icon name="warning"/>}
+                    style={{ display: showWarning ? 'flex' : 'none' }}
+                    marqueeProps={{ loop: true, style: { fontSize: 14, color: '#f00' } }}
+                >
+                    <Text>检测到养殖场内{warnList.join(',')}异常，请立即处理！</Text>
+                </NoticeBar>
                 <View style={styles.body}>
-                    <View>
-                        <Text style={styles.chartTitle}>环境参数变化趋势图</Text>
+                    <View style={styles.titleWrapper}>
+                        <Text style={styles.title}>环境监控</Text>
                         <DatePicker 
                             date={date}
                             mode="date"
@@ -54,27 +68,40 @@ class Monitor extends React.Component<IProps, IState> {
                             confirmBtnText="确定"
                             cancelBtnText="取消"
                             onDateChange={this.handleSelectDate}
-                            style={styles.datePicker}
+                            customStyles={{
+                                dateInput: styles.dateInput
+                            }}
                         />
                     </View>
                     <Echarts option={this.initEchartOption()} height={350} />
-                    <ScrollView style={styles.tableWrapper}>
-                        <Table borderStyle={{borderColor: '#fa7399'}}>
+                    <Text style={{...styles.title, marginTop: 15}}>历史数据</Text>
+                    <View style={styles.tableWrapper}>
+                    {
+                        envList.length === 0 ?
+                        <Empty hint="暂无数据" /> :
+                        <Table borderStyle={{borderColor: '#C1C0B9'}}>
                             <Row data={tableHead} style={styles.tableHead} textStyle={styles.textHead}/>
-                            <Rows data={this.initTableData()} textStyle={styles.textBody}/>
+                            <Rows data={this.getTableData()} textStyle={styles.textBody}/>
                         </Table>
-                    </ScrollView>
+                    }
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         )
     }
 
     componentDidMount () {
+        this.farmId = parseInt(this.props.match.params.farmId);
         this.setState({
             date: TODAY
         }, () => {
             this.setTimer();
         });
+        this.fetchFarmInfo();
+    }
+
+    componentWillUnmount () {
+        this.clearTimer();
     }
 
     setTimer = async () => {
@@ -85,20 +112,45 @@ class Monitor extends React.Component<IProps, IState> {
                 return;
             }
             this.fetchEnvList();
-        }, 1000 * 60)
+        }, 1000 * 60);
+    }
+
+    fetchFarmInfo = async () => {
+        const res: IResponse = await ajax('/farm/info', {id: this.farmId});
+        if(res.error) {
+            Toast.fail(res.msg, 1);
+            return;
+        }
+        this.setState({
+            farmInfo: res.data
+        })
     }
 
     fetchEnvList = async () => {
         const { date } = this.state;
-        const id = parseInt(this.props.match.params.farmId);
-        const res: IResponse = await ajax('/farm/env', {id, date});
+        const res: IResponse = await ajax('/farm/env', {date, id: this.farmId});
         if(res.error) {
             Toast.fail(res.msg, 1);
             return;
         }
         this.setState({
             envList: res.data
+        }, () => {
+            this.checkEnv();
         })
+    }
+
+    checkEnv = () => {
+        const { envList, farmInfo } = this.state;
+        const latest = envList[envList.length - 1];
+        const warnList = [];
+        latest.temperature > farmInfo.temp_thres && warnList.push('温度');
+        latest.humidity > farmInfo.humi_thres && warnList.push('湿度');
+        latest.illuminance > farmInfo.illum_thres && warnList.push('光照度');
+        latest.ammonia > farmInfo.amm_thres && warnList.push('氨气浓度');
+        latest.h2s > farmInfo.h2s_thres && warnList.push('H2S浓度');
+        latest.co2 > farmInfo.co2_thres && warnList.push('CO2浓度');
+        this.setState({ warnList });
     }
 
     clearTimer = () => {
@@ -180,7 +232,7 @@ class Monitor extends React.Component<IProps, IState> {
         return option;
     }
 
-    initTableData = () => {
+    getTableData = () => {
         const { envList } = this.state;
         return envList.map(env => [
             env.temperature,
@@ -198,33 +250,40 @@ const styles = StyleSheet.create({
     body: {
         width: '100%',
         padding: 10,
-        alignItems: 'center',
     },
-    chartTitle: {
+    title: {
         fontSize: 18,
         fontWeight: '600',
-        marginTop: 20
+        color: '#222',
+        borderLeftWidth: 4,
+        borderLeftColor: '#fa7399',
+        paddingLeft: 10,
     },
-    datePicker: {
-        alignSelf: 'center',
-        marginTop: 10,
-        marginBottom: 25,
+    dateInput: {
+        height: 30,
+        borderColor: '#fa7399',
+        borderRadius: 5
+    },
+    titleWrapper: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginVertical: 15,
     },
     tableWrapper: {
         width: '100%',
         marginTop: 15,
-    },
-    table: {
-        borderWidth: 0
+        marginBottom: 30
     },
     tableHead: {
         backgroundColor: '#fff',
-        height: 35 
+        height: 35
     },
     textHead: {
         textAlign: 'center',
-        fontWeight: '500',
-        fontSize: 15,
+        fontWeight: '600',
+        fontSize: 15
     },
     textBody: {
         textAlign: 'center',
