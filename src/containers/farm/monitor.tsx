@@ -7,7 +7,7 @@ import Empty from '../../components/empty';
 import ajax from '../../../services';
 import { formatTime, formatDate } from '../../utils/time';
 import Echarts from 'native-echarts';
-import { Table, Row, Rows, TableWrapper, Cell } from 'react-native-table-component';
+import { Table, Row, Rows } from 'react-native-table-component';
 
 interface IProps {
     history: {
@@ -142,6 +142,9 @@ class Monitor extends React.Component<IProps, IState> {
 
     checkEnv = () => {
         const { envList, farmInfo } = this.state;
+        if(envList.length === 0) {
+            return;
+        }
         const latest = envList[envList.length - 1];
         const warnList = [];
         latest.temperature > farmInfo.temp_thres && warnList.push('温度');

@@ -11,31 +11,31 @@ interface IProps {
     }
 }
 interface IState {
-    name: string,
+    mobile: string,
     pwd: string,
     role: UserRole
 }
 class Login extends React.Component<IProps, IState> {
 
     state: IState = {
-        name: '',
+        mobile: '',
         pwd: '',
         role: UserRole.Employee
     }
 
     render() {
-        const { name, pwd, role } = this.state
+        const { mobile, pwd, role } = this.state
         return (
             <View style={styles.login}>
                 <Image source={require('../../assets/logo.png')} style={styles.header}/>
                 <View style={styles.inputArea}>
                     <InputItem
                         clear
-                        value={name}
-                        onChange={this.handleNameChange}
+                        value={mobile}
+                        onChange={this.handleMobileChange}
                         style={styles.input}
                         labelNumber={2}
-                        placeholder="请输入用户名"
+                        placeholder="请输入手机号"
                     >
                         <Icon name="user" size="sm" />
                     </InputItem>
@@ -63,7 +63,7 @@ class Login extends React.Component<IProps, IState> {
                     type="primary" 
                     style={styles.btn}
                     activeStyle={styles.activeBtn}
-                    disabled={!name || !pwd}
+                    disabled={!mobile || !pwd}
                     onPress={this.handleLogin}
                 >
                     登录
@@ -72,9 +72,9 @@ class Login extends React.Component<IProps, IState> {
         )
     }
 
-    handleNameChange = (name: string) => {
+    handleMobileChange = (mobile: string) => {
         this.setState({
-            name
+            mobile
         })
     }
 

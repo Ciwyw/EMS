@@ -7,9 +7,8 @@ const styles = StyleSheet.create({
         paddingRight: 32
     },
     header: {
-        marginTop: 65,
-        marginBottom: 35,
-        marginRight: -400
+        marginTop: 100,
+        marginBottom: 50
     },
     inputArea: {
         width: '100%',

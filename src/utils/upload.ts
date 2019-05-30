@@ -1,10 +1,10 @@
 import config from '../../services/config';
 
-const upload = async ( url: string ) => {
+const upload = async ( uri: string ) => {
     const formData = new FormData();
-    const name = `${Math.random().toString().slice(-6)}.${url.split('.')[1]}`;
+    const name = `${Math.random().toString().slice(-6)}.${uri.split('.')[1]}`;
     const file: any = {
-        url,
+        uri,
         name,
         type: 'multipart/form-data'
     }
