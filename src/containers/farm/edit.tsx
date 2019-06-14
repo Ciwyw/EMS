@@ -70,7 +70,7 @@ class Farm extends React.Component<IProps, IState> {
                     }
                      {
                         getFieldDecorator('stall_num',{
-                            initialValue: farmInfo.stall_num && `${farmInfo.stall_num}` || '0',
+                            initialValue: farmInfo.stall_num && `${farmInfo.stall_num}`,
                             rules: [{ required: true }],
                             normalize: normalizeToInt
                         })(
@@ -101,50 +101,50 @@ class Farm extends React.Component<IProps, IState> {
                 <List renderHeader="环境参数阈值">
                     {
                         getFieldDecorator('temp_thres',{
-                            initialValue: farmInfo.temp_thres && `${farmInfo.temp_thres}` || '0',
+                            initialValue: farmInfo.temp_thres && `${farmInfo.temp_thres}`,
                             normalize: normalizeToFloat
                         })(
-                            <InputItem type="number" clear extra="℃ ">温度</InputItem>                           
+                            <InputItem type="number" clear extra="℃  ">温度</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('humi_thres',{
-                            initialValue: farmInfo.humi_thres && `${farmInfo.humi_thres}` || '0',
+                            initialValue: farmInfo.humi_thres && `${farmInfo.humi_thres}`,
                             normalize: normalizeToFloat
                         })(
-                            <InputItem type="number" clear extra="% ">湿度</InputItem>                           
+                            <InputItem type="number" clear extra="%  ">湿度</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('illum_thres',{
-                            initialValue: farmInfo.illum_thres && `${farmInfo.illum_thres}` || '0',
+                            initialValue: farmInfo.illum_thres && `${farmInfo.illum_thres}`,
                             normalize: normalizeToFloat
                         })(
-                            <InputItem type="number" clear extra="lx">光照度</InputItem>                           
+                            <InputItem type="number" clear extra="lux">光照度</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('amm_thres',{
-                            initialValue: farmInfo.amm_thres && `${farmInfo.amm_thres}` || '0',
+                            initialValue: farmInfo.amm_thres && `${farmInfo.amm_thres}`,
                             normalize: normalizeToFloat
                         })(
-                            <InputItem type="number" clear extra="ppm">氨气</InputItem>                           
+                            <InputItem type="number" clear extra="mg/m3">氨气</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('h2s_thres',{
-                            initialValue: farmInfo.h2s_thres && `${farmInfo.h2s_thres}` || '0',
+                            initialValue: farmInfo.h2s_thres && `${farmInfo.h2s_thres}`,
                             normalize: normalizeToFloat
                         })(
-                            <InputItem type="number" clear extra="ppm">H2S</InputItem>                           
+                            <InputItem type="number" clear extra="mg/m3">H2S</InputItem>                           
                         )
                     }
                     {
                         getFieldDecorator('co2_thres',{
-                            initialValue: farmInfo.co2_thres && `${farmInfo.co2_thres}` || '0',
+                            initialValue: farmInfo.co2_thres && `${farmInfo.co2_thres}`,
                             normalize: normalizeToFloat
                         })(
-                            <InputItem type="number" clear extra="ppm">CO2</InputItem>                           
+                            <InputItem type="number" clear extra="ppm ">CO2</InputItem>                           
                         )
                     }
                 </List>

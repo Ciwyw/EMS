@@ -25,7 +25,8 @@ interface IState {
     envList: IEnv[],
     farmInfo: IFarm,
     date: string,
-    warnList: string[]
+    warnList: string[],
+    showWarning: boolean
 }
 
 const TODAY = formatDate();
@@ -37,15 +38,15 @@ class Monitor extends React.Component<IProps, IState> {
         envList: [],
         farmInfo: {},
         date: '',
-        warnList: []
+        warnList: [],
+        showWarning: false
     }
 
     private interval: number | null = null;
     private farmId: number;
 
     render() {   
-        const { date, warnList, envList } = this.state; 
-        const showWarning = warnList.length !== 0 && date === TODAY; 
+        const { date, warnList, envList, showWarning } = this.state; 
         return (
             <ScrollView>
                 <Header title={this.props.match.params.farmName} history={this.props.history}/>
@@ -112,7 +113,7 @@ class Monitor extends React.Component<IProps, IState> {
                 return;
             }
             this.fetchEnvList();
-        }, 1000 * 60);
+        }, 1000 * 15);
     }
 
     fetchFarmInfo = async () => {
@@ -141,7 +142,7 @@ class Monitor extends React.Component<IProps, IState> {
     }
 
     checkEnv = () => {
-        const { envList, farmInfo } = this.state;
+        const { envList, farmInfo, date } = this.state;
         if(envList.length === 0) {
             return;
         }
@@ -153,7 +154,12 @@ class Monitor extends React.Component<IProps, IState> {
         latest.ammonia > farmInfo.amm_thres && warnList.push('氨气浓度');
         latest.h2s > farmInfo.h2s_thres && warnList.push('H2S浓度');
         latest.co2 > farmInfo.co2_thres && warnList.push('CO2浓度');
-        this.setState({ warnList });
+        this.setState({ 
+            warnList,
+            showWarning: warnList.length !== 0 && date === TODAY
+         }, () => {
+             this.state.showWarning && Toast.fail('环境异常！');
+         });
     }
 
     clearTimer = () => {
@@ -259,12 +265,12 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#222',
         borderLeftWidth: 4,
-        borderLeftColor: '#fa7399',
+        borderLeftColor: '#5096ff',
         paddingLeft: 10,
     },
     dateInput: {
         height: 30,
-        borderColor: '#fa7399',
+        borderColor: '#5096ff',
         borderRadius: 5
     },
     titleWrapper: {

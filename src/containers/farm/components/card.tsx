@@ -19,12 +19,12 @@ class Card extends React.Component<IProps> {
                             <View>
                                 <Text style={styles.name}>{info.farm_name}</Text>
                                 <View style={styles.address}>
-                                    <Icon size="xs" name="environment" color="#fa7399"/>
+                                    <Icon size="xs" name="environment" color="#5096ff"/>
                                     <Text>{info.address}</Text>
                                 </View>
                             </View>
                             <View style={styles.link}>
-                                <Text style={{ color: '#fa7399' }}>详情</Text><Icon name="right" color="#fa7399" />
+                                <Text style={{ color: '#5096ff' }}>详情</Text><Icon name="right" color="#5096ff" />
                             </View>
                         </View>
                     </View>

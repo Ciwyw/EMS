@@ -22,14 +22,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 20,
         alignSelf: 'flex-end',
-    },
-    btn: {
-        width: '100%',
-        backgroundColor: '#fa7399',
-        borderWidth: 0,
-    },
-    activeBtn: {
-        backgroundColor: '#fa7399'
     }
 })
 

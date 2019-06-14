@@ -96,7 +96,7 @@ class EmployeeEdit extends React.Component<IProps, IState> {
                             initialValue: employeeInfo.phone_number,
                             rules: [{ required: true }]
                     })(
-                        <InputItem clear>手机号</InputItem>
+                        <InputItem clear type="numeric">手机号</InputItem>
                     )
                 }
                 {

@@ -47,9 +47,8 @@ export default class EmployDetail extends React.Component<IProps, IState> {
                 </List>
                 <Button 
                     type="primary" 
-                    style={styles.btn}
-                    activeStyle={styles.activeBtn}
                     onPress={this.handleDelete}
+                    style={styles.btn}
                 >
                     删除
                 </Button>
@@ -105,12 +104,8 @@ export default class EmployDetail extends React.Component<IProps, IState> {
 const styles = StyleSheet.create({
     btn: {
         width: '90%',
-        backgroundColor: '#fa7399',
         borderWidth: 0,
         alignSelf: 'center',
         marginTop: 50
-    },
-    activeBtn: {
-        backgroundColor: '#fa7399'
     }
 })

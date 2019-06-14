@@ -32,6 +32,7 @@ class Login extends React.Component<IProps, IState> {
                     <InputItem
                         clear
                         value={mobile}
+                        type="number"
                         onChange={this.handleMobileChange}
                         style={styles.input}
                         labelNumber={2}
@@ -60,9 +61,8 @@ class Login extends React.Component<IProps, IState> {
                     <Picker.Item label="管理员" value={UserRole.Admin} />
                 </Picker>
                 <Button 
-                    type="primary" 
-                    style={styles.btn}
-                    activeStyle={styles.activeBtn}
+                    type="primary"
+                    style={{ width: '100%' }} 
                     disabled={!mobile || !pwd}
                     onPress={this.handleLogin}
                 >

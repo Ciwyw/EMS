@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { List, Icon, Button, Modal, Toast } from '@ant-design/react-native';
 import { IUserState, UserRole, Sex } from '../../redux/user-reducer';
 import ajax from '../../../services';
@@ -31,19 +31,21 @@ class User extends React.Component<IProps, IState> {
                 <View style={styles.baseinfo}>
                     <View style={styles.wrapper}>
                         <Image style={styles.avatar} source={{ uri: user.avatar}} />
-                        <Icon style={styles.sex} name={isMale ? 'man' : 'woman'} color='#fa7399'/>
+                        <Icon style={styles.sex} name={isMale ? 'man' : 'woman'} color='#5096ff'/>
                     </View>
                     <Text style={styles.userName}>{user.user_name} · {isAdmin ? '管理员':'养殖工人'}</Text>
                 </View>
                 <List>
-                    <ListItem 
-                        onPress={this.handleInfo}
-                        style={styles.listItem} 
-                        arrow="horizontal" 
-                        thumb={<Icon style={styles.icon} name="user" color="#3194d0"/>}
-                    >
-                        个人信息
-                    </ListItem>
+                    <TouchableOpacity>
+                        <ListItem 
+                            onPress={this.handleInfo}
+                            style={styles.listItem} 
+                            arrow="horizontal" 
+                            thumb={<Icon style={styles.icon} name="user" color="#3194d0"/>}
+                        >
+                            个人信息
+                        </ListItem>
+                    </TouchableOpacity>
                    {
                        isAdmin ?
                        <ListItem    
@@ -66,7 +68,6 @@ class User extends React.Component<IProps, IState> {
                 <Button 
                     type="primary" 
                     style={styles.btn}
-                    activeStyle={styles.activeBtn}
                     onPress={this.handleLogout}
                 >
                     退出登录
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
         right: 13
     },
     userName: {
-        color: '#fa7399',
+        color: '#5096ff',
         fontSize: 16,
         marginTop: 10
     },
@@ -141,13 +142,9 @@ const styles = StyleSheet.create({
     },
     btn: {
         width: '90%',
-        backgroundColor: '#fa7399',
         borderWidth: 0,
         alignSelf: 'center',
         marginTop: 50
-    },
-    activeBtn: {
-        backgroundColor: '#fa7399'
     }
 })
 

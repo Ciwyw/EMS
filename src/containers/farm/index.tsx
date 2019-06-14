@@ -70,9 +70,9 @@ class Farm extends React.Component<IProps, IState> {
                 <List renderHeader="环境参数阈值">
                     <Item extra={<Text>{farmInfo.temp_thres}</Text>} arrow="empty">温度 (℃)</Item>
                     <Item extra={<Text>{farmInfo.humi_thres}</Text>} arrow="empty">湿度 (%)</Item>
-                    <Item extra={<Text>{farmInfo.illum_thres}</Text>} arrow="empty">光照度 (lx)</Item>
-                    <Item extra={<Text>{farmInfo.amm_thres}</Text>} arrow="empty">氨气 (ppm)</Item>
-                    <Item extra={<Text>{farmInfo.h2s_thres}</Text>} arrow="empty">H2S (ppm)</Item>
+                    <Item extra={<Text>{farmInfo.illum_thres}</Text>} arrow="empty">光照度 (lux)</Item>
+                    <Item extra={<Text>{farmInfo.amm_thres}</Text>} arrow="empty">氨气 (mg/m3)</Item>
+                    <Item extra={<Text>{farmInfo.h2s_thres}</Text>} arrow="empty">H2S (mg/m3)</Item>
                     <Item extra={<Text>{farmInfo.co2_thres}</Text>} arrow="empty">CO2 (ppm)</Item>
                 </List>
                 <TouchableOpacity style={styles.monitor} onPress={this.handleMonitor}>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 0,
         bottom: 120,
-        backgroundColor: '#fa7399',
+        backgroundColor: '#5096ff',
         paddingLeft: 10,
         borderTopLeftRadius: 25,
         borderBottomLeftRadius: 25,
